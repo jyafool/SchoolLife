@@ -1,0 +1,12 @@
+# git忽略管理的文件
+
+# target目錄
+**/target/
+# 。idea、iml、class後綴文件
+.idea
+*.iml
+*.class
+# Test結尾的測試類
+*Test.java
+# 測試文件夾
+**/test/
