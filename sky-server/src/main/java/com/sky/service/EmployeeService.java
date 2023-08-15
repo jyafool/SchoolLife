@@ -39,4 +39,20 @@ public interface EmployeeService {
      * @return
      */
     int setStatus (Integer status, Long id);
+    
+    /**
+     * 修改員工信息
+     *
+     * @param employeeDTO
+     * @return
+     */
+    int updateEmployeeInfo (EmployeeDTO employeeDTO);
+    
+    /**
+     * 根據id查詢單個員工
+     *
+     * @param id
+     * @return
+     */
+    Employee selectEmployeeInfo (Long id);
 }

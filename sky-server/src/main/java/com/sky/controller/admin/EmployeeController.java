@@ -125,7 +125,30 @@ public class EmployeeController {
         } else {
             return Result.error (MessageConstant.UNKNOWN_ERROR);
         }
-        
+    
     }
+    
+    @ApiOperation ("修改員工信息")
+    @PutMapping
+    public Result updateEmployeeInfo (@RequestBody EmployeeDTO employeeDTO) {
+        log.info ("要修改的員工信息：{}", employeeDTO);
+        int updateRow = employeeService.updateEmployeeInfo (employeeDTO);
+        if (updateRow == 1) {
+            log.info ("修改成功");
+            return Result.success ();
+        } else {
+            log.info ("修改失敗");
+            return Result.error (MessageConstant.UNKNOWN_ERROR);
+        }
+    }
+    
+    @ApiOperation ("查詢員工信息")
+    @GetMapping ("/{id}")
+    public Result<Employee> selectEmployeeInfo (@PathVariable ("id") Long id) {
+        log.info ("要查找的員工id：{}", id);
+        Employee employee = employeeService.selectEmployeeInfo (id);
+        return Result.success (employee);
+    }
+    
     
 }

@@ -18,9 +18,14 @@
         </where>
         order by create_time desc
     </select>
+    <select id="selectEmployeeInfo" resultType="com.sky.entity.Employee">
+        select *
+        from employee
+        where id = #{id}
+    </select>
 
     <!--    配置文件裏type-aliases-package: com.sky.entity已經進行掃包起別名，可以不用全類名-->
-    <update id="setStatus" parameterType="Employee">
+    <update id="updateEmployeeInfo" parameterType="Employee">
         update employee
         <set>
             <if test="name != null">
@@ -44,15 +49,15 @@
                 #{sex},
             </if>
             <if test="idNumber != null">
-                idNumber =
+                id_number =
                 #{idNumber},
             </if>
             <if test="updateTime != null">
-                updateTime =
+                update_time =
                 #{updateTime},
             </if>
             <if test="updateUser != null">
-                updateUser =
+                update_user =
                 #{updateUser},
             </if>
             <if test="status != null">

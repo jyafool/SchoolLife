@@ -140,7 +140,44 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .id (id)
                 .status (status)
                 .build ();
-        return employeeMapper.setStatus (employee);
+    
+        return employeeMapper.updateEmployeeInfo (employee);
+    }
+    
+    /**
+     * 修改員工信息
+     *
+     * @param employeeDTO
+     * @return
+     */
+    @Override
+    public int updateEmployeeInfo (EmployeeDTO employeeDTO) {
+        // 業務層中應該對數據進行更加完整的封裝
+        Employee employee = Employee.builder ()
+                .updateTime (LocalDateTime.now ())
+                .updateUser (BaseContext.getCurrentId ())
+                .build ();
+        BeanUtils.copyProperties (employeeDTO, employee);
+        
+       /* // 對於員工修改的密碼，要先md5加密后再存數據庫
+        String password = employee.getPassword ();
+        employee.setPassword (DigestUtils.md5DigestAsHex (password.getBytes ()));*/
+        
+        // 將提交的數據在數據庫中修改
+        return employeeMapper.updateEmployeeInfo (employee);
+    }
+    
+    /**
+     * 根據id查詢單個員工
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee selectEmployeeInfo (Long id) {
+        Employee employee = employeeMapper.selectEmployeeInfo (id);
+        employee.setPassword ("******");
+        return employee;
     }
     
 }

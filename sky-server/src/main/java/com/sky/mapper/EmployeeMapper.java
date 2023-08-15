@@ -35,11 +35,13 @@ public interface EmployeeMapper {
      */
     Page<Employee> pageQuery (EmployeePageQueryDTO employeePageQueryDTO);
     
+    
     /**
-     * 修改員工賬號狀態
+     * 修改員工信息
      *
      * @param employee
-     * @return
      */
-    int setStatus (Employee employee);
+    int updateEmployeeInfo (Employee employee);
+    
+    Employee selectEmployeeInfo (Long id);
 }
