@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -91,13 +96,51 @@ public class EmployeeServiceImpl implements EmployeeService {
         
         // 默認密碼進行初始化，需要進行md5加密再傳入數據庫
         employee.setPassword (DigestUtils.md5DigestAsHex (PasswordConstant.DEFAULT_PASSWORD.getBytes ()));
-        
+    
         //
         // TODO: 2023/8/15 後期需要改爲當前用戶登錄的id(已完成)
         employee.setCreateUser (BaseContext.getCurrentId ());
         employee.setUpdateUser (BaseContext.getCurrentId ());
-        
+    
         return employeeMapper.saveEmployee (employee);
+    }
+    
+    /**
+     * 員工分頁查詢
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
+    public PageResult pageQuery (EmployeePageQueryDTO employeePageQueryDTO) {
+        
+        // 使用分頁插件，將參數傳遞進去，攔截查詢語句，進行員工分頁查詢
+        PageHelper.startPage (employeePageQueryDTO.getPage (), employeePageQueryDTO.getPageSize ());
+        
+        Page<Employee> page = employeeMapper.pageQuery (employeePageQueryDTO);
+        
+        long total = page.getTotal ();
+        List<Employee> records = page.getResult ();
+        
+        System.out.println ("total:" + total);
+        System.out.println ("records:" + records);
+        
+        return new PageResult (total, records);
+    }
+    
+    /**
+     * 修改員工賬號狀態
+     *
+     * @param status
+     * @return
+     */
+    @Override
+    public int setStatus (Integer status, Long id) {
+        // 在此應該先對屬性進行封裝，封裝對象，養成規範，
+        Employee employee = Employee.builder ()
+                .id (id)
+                .status (status)
+                .build ();
+        return employeeMapper.setStatus (employee);
     }
     
 }

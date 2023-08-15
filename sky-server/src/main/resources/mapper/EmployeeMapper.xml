@@ -2,4 +2,66 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.EmployeeMapper">
+
+
+    <!--#       對用戶名判斷是否爲空，然後進行模糊查詢，
+    #       這裏後面不用再拼接limit關鍵字，因爲分頁插件會對查詢語句自動拼接-->
+    <select id="pageQuery" resultType="com.sky.entity.Employee">
+        select * from employee
+        <where>
+            <if test="name != null and name != ''">
+                username like concat('%',
+                #{name},
+                '%'
+                )
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!--    配置文件裏type-aliases-package: com.sky.entity已經進行掃包起別名，可以不用全類名-->
+    <update id="setStatus" parameterType="Employee">
+        update employee
+        <set>
+            <if test="name != null">
+                name =
+                #{name},
+            </if>
+            <if test="username != null">
+                username =
+                #{username},
+            </if>
+            <if test="password != null">
+                password =
+                #{password},
+            </if>
+            <if test="phone != null">
+                phone =
+                #{phone},
+            </if>
+            <if test="sex != null">
+                sex =
+                #{sex},
+            </if>
+            <if test="idNumber != null">
+                idNumber =
+                #{idNumber},
+            </if>
+            <if test="updateTime != null">
+                updateTime =
+                #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                updateUser =
+                #{updateUser},
+            </if>
+            <if test="status != null">
+                status =
+                #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
 </mapper>

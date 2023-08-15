@@ -1,10 +1,13 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -13,10 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,17 +34,6 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private JwtProperties jwtProperties;
-    
-    
-    @ApiOperation (value = "添加新員工")
-    @PostMapping// ("/addEmployee")
-    public Result<Employee> addEmployee (@RequestBody EmployeeDTO employeeDTO) {
-        log.info ("新增的員工：{}", employeeDTO);
-        int addResult = employeeService.add (employeeDTO);
-        log.info ("addResult:{}", addResult);
-        
-        return Result.success ();
-    }
     
     /**
      * 登录
@@ -90,6 +79,53 @@ public class EmployeeController {
     @PostMapping ("/logout")
     public Result<String> logout () {
         return Result.success ();
+    }
+    
+    
+    /**
+     * 添加新員工
+     *
+     * @param employeeDTO
+     * @return
+     */
+    @ApiOperation (value = "添加新員工")
+    @PostMapping// ("/addEmployee")
+    public Result<Employee> addEmployee (@RequestBody EmployeeDTO employeeDTO) {
+        log.info ("新增的員工：{}", employeeDTO);
+        int addResult = employeeService.add (employeeDTO);
+        log.info ("addResult:{}", addResult);
+        
+        return Result.success ();
+    }
+    
+    /**
+     * 員工分頁查詢
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @GetMapping ("/page")
+    @ApiOperation ("員工分頁查詢")
+    public Result<PageResult> page (EmployeePageQueryDTO employeePageQueryDTO) {
+        log.info ("員工分頁查詢的參數為：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.pageQuery (employeePageQueryDTO);
+        return Result.success (pageResult);
+    }
+    
+    @PostMapping ("/status/{status}")
+    @ApiOperation ("設置員工賬號狀態")
+    public Result status (@PathVariable (name = "status") Integer status, Long id) {
+        log.info ("要修改的員工id：{}，此時狀態：{}", id, status);
+        // 0表示禁用 1表示啓用
+        // 傳過來的參數不是0就是1，即啓用改爲禁用，禁用改爲啓用
+        // 該數據庫字段值
+        int result = employeeService.setStatus (status, id);
+        if (result == 1) {
+            return Result.success ();
+        } else {
+            return Result.error (MessageConstant.UNKNOWN_ERROR);
+        }
+        
     }
     
 }
