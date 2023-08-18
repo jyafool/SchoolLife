@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@Api ("商品分類相關接口")
+@Api (tags = "商品分類相關接口")
 @RequestMapping ("/admin/category")
 @Slf4j
 public class CategoryController {

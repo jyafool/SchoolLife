@@ -60,5 +60,6 @@
             <artifactId>wechatpay-apache-httpclient</artifactId>
         </dependency>
 
+
     </dependencies>
 </project>

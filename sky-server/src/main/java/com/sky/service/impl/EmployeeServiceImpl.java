@@ -5,7 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -85,22 +83,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 對象屬性拷貝，兩對象的字段保持一致才能實現拷貝
         BeanUtils.copyProperties (employeeDTO, employee);
         
-        // 再把其他沒有的字段進行完善
-        
         // 用戶狀態 0表示鎖定，1表示正常
         employee.setStatus (StatusConstant.ENABLE);
         
-        //
-        employee.setCreateTime (LocalDateTime.now ());
-        employee.setUpdateTime (LocalDateTime.now ());
-        
         // 默認密碼進行初始化，需要進行md5加密再傳入數據庫
         employee.setPassword (DigestUtils.md5DigestAsHex (PasswordConstant.DEFAULT_PASSWORD.getBytes ()));
-    
-        //
-        // TODO: 2023/8/15 後期需要改爲當前用戶登錄的id(已完成)
-        employee.setCreateUser (BaseContext.getCurrentId ());
-        employee.setUpdateUser (BaseContext.getCurrentId ());
     
         return employeeMapper.saveEmployee (employee);
     }
@@ -153,10 +140,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public int updateEmployeeInfo (EmployeeDTO employeeDTO) {
         // 業務層中應該對數據進行更加完整的封裝
-        Employee employee = Employee.builder ()
-                .updateTime (LocalDateTime.now ())
-                .updateUser (BaseContext.getCurrentId ())
-                .build ();
+        Employee employee = Employee.builder ().build ();
         BeanUtils.copyProperties (employeeDTO, employee);
         
        /* // 對於員工修改的密碼，要先md5加密后再存數據庫

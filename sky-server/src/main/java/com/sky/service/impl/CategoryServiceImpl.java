@@ -4,7 +4,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
@@ -18,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service (value = "categoryServiceImpl")
@@ -41,10 +39,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public int addNewCategory (CategoryDTO categoryDTO) {
         Category category = Category.builder ()
-                .createTime (LocalDateTime.now ())
-                .updateTime (LocalDateTime.now ())
-                .createUser (BaseContext.getCurrentId ())
-                .updateUser (BaseContext.getCurrentId ())
                 .status (StatusConstant.DISABLE)
                 .build ();
         
@@ -95,8 +89,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = Category.builder ()
                 .status (status)
                 .id (id)
-                .updateUser (BaseContext.getCurrentId ())
-                .updateTime (LocalDateTime.now ())
                 .build ();
         return categoryMapper.updateCategory (category);
     }
@@ -110,10 +102,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public int updateCategory (CategoryDTO categoryDTO) {
         // 先進行封裝成entity
-        Category category = Category.builder ()
-                .updateTime (LocalDateTime.now ())
-                .createUser (BaseContext.getCurrentId ())
-                .build ();
+        Category category = Category.builder ().build ();
         BeanUtils.copyProperties (categoryDTO, category);
         
         return categoryMapper.updateCategory (category);
