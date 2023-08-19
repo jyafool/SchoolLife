@@ -120,5 +120,53 @@ public class DishServiceImpl implements DishService {
         
     }
     
+    /**
+     * 根據id查詢菜品：
+     * 在查詢菜品的時候，同時要將菜品的口味查出來
+     * 這涉及到兩張表的查詢
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public DishVO selectDishByIdWithFlavors (Long id) {
+        DishVO dishVO = new DishVO ();
+        // 1、先將dish查出來
+        Dish dish = dishMapper.selectDishById (id);
+        BeanUtils.copyProperties (dish, dishVO);
+        // 2、再把flavor查出來
+        dishVO.setFlavors (dishFlavorMapper.selectByDishId (id));
+        // 封裝后返回
+        return dishVO;
+    }
+    
+    /**
+     * 修改菜品信息:
+     * 修改信息時會遇到口味的修改問題：先查詢該口味——再對比不同進行更改？
+     * 這樣很麻煩，解決方法：先將口味表中的對應口味直接刪除，然後再進行新口味的添加
+     */
+    @Transactional  //
+    @Override
+    public void updateDish (DishDTO dishDTO) {
+        //
+        Dish dish = new Dish ();
+        // 屬性拷貝
+        BeanUtils.copyProperties (dishDTO, dish);
+        
+        Long dishId = dish.getId ();
+        // 先將口味表刪除
+        dishFlavorMapper.deleteByDishId (dishId);
+        // 再添加新口味
+        List<DishFlavor> flavors = dishDTO.getFlavors ();
+        if (flavors != null && flavors.size () > 0) {
+            flavors.forEach (dishFlavor -> dishFlavor.setDishId (dishId));
+            dishFlavorMapper.insertBatch (flavors);
+        }
+        
+        // 再對菜品表進行更新
+        dishMapper.updateDish (dish);
+        
+    }
+    
     
 }
