@@ -6,3 +6,8 @@ sky:
     database: sky_take_out
     username: root
     password: Ljf20031227
+  alioss:
+    endpoint: 告訴對方
+    access-key-id: 受到廣汎
+    access-key-secret: 士大夫敢死隊風格
+    bucket-name: 歲的法國
