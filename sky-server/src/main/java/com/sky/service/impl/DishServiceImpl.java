@@ -152,8 +152,12 @@ public class DishServiceImpl implements DishService {
         Dish dish = new Dish ();
         // 屬性拷貝
         BeanUtils.copyProperties (dishDTO, dish);
-        
+    
         Long dishId = dish.getId ();
+    
+        // 再對菜品表進行更新
+        dishMapper.updateDish (dish);
+    
         // 先將口味表刪除
         dishFlavorMapper.deleteByDishId (dishId);
         // 再添加新口味
@@ -162,10 +166,29 @@ public class DishServiceImpl implements DishService {
             flavors.forEach (dishFlavor -> dishFlavor.setDishId (dishId));
             dishFlavorMapper.insertBatch (flavors);
         }
-        
-        // 再對菜品表進行更新
+    
+    
+    }
+    
+    /**
+     * 啓售、停售的菜品
+     *
+     * @param dishDTO
+     */
+    @Override
+    public void changeStatus (DishDTO dishDTO) {
+        Dish dish = new Dish ();
+        BeanUtils.copyProperties (dishDTO, dish);
         dishMapper.updateDish (dish);
+    }
+    
+    /**
+     * 根據分類id查詢菜品
+     */
+    @Override
+    public List<Dish> selectByCategoryId (Long categoryId) {
         
+        return dishMapper.selectByCategoryId (categoryId);
     }
     
     

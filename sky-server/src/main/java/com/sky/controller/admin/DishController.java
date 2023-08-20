@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
@@ -67,7 +68,7 @@ public class DishController {
      * 並封裝到list集合裏
      */
     @ApiOperation ("菜品刪除")
-    @DeleteMapping ("")
+    @DeleteMapping
     public Result deleteDish (@RequestParam List<Long> ids) {
         log.info ("要刪除菜品的id集合：{}", ids);
         dishService.deleteDish (ids);
@@ -94,6 +95,40 @@ public class DishController {
         log.info ("要修改的菜品信息：{}", dishDTO);
         dishService.updateDish (dishDTO);
         return Result.success ();
+    }
+    
+    /**
+     * 起售停售菜品
+     *
+     * @param status
+     * @param id
+     * @return
+     */
+    @ApiOperation ("起售停售菜品")
+    @PostMapping ("/status/{status}")
+    public Result changeStatus (@PathVariable Integer status, Long id) {
+        log.info ("要啓售、停售的菜品：{}", id);
+        DishDTO dishDTO = DishDTO.builder ()
+                .status (status)
+                .id (id)
+                .build ();
+        dishService.changeStatus (dishDTO);
+        return Result.success ();
+    }
+    
+    /**
+     * 根據分類id查詢菜品
+     *
+     * @param categoryId
+     * @return
+     */
+    @ApiOperation ("根據分類id查詢菜品")
+    @GetMapping ("/list")
+    public Result<List<Dish>> selectByCategoryId (@RequestParam Long categoryId) {
+        log.info ("根據分類id查詢菜品:{}", categoryId);
+        List<Dish> dishes = dishService.selectByCategoryId (categoryId);
+        
+        return Result.success (dishes);
     }
     
 }
