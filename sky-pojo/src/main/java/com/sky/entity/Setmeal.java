@@ -22,7 +22,7 @@ public class Setmeal implements Serializable {
     
     private Long id;
     
-    //分类id
+    //分类id:如人氣套餐、商務套餐
     private Long categoryId;
     
     //套餐名称

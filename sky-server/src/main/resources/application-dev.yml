@@ -6,6 +6,11 @@ sky:
     database: sky_take_out
     username: root
     password: Ljf20031227
+  reids:
+    host: localhost
+    port: 6379
+    password: Ljf20031227
+    datebase: 10
   alioss:
     endpoint: 告訴對方
     access-key-id: 受到廣汎
