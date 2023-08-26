@@ -16,3 +16,6 @@ sky:
     access-key-id: 受到廣汎
     access-key-secret: 士大夫敢死隊風格
     bucket-name: 歲的法國
+  wechat:
+    appid: wx12b66057dae5aa1d
+    secret: fb9c91dc94adf68880c4d8b8efbc22ff

@@ -21,7 +21,7 @@ public class RedisConfiguration {
         redisTemplate.setKeySerializer (new StringRedisSerializer ());
         
         System.out.println ("redis:" + redisTemplate);
-        // TODO: 2023/8/23 redis無法獲取鏈接，原因未知，已解決，在ynl移除密碼配置
+        // TODO: 2023/8/23 redis無法獲取鏈接，原因未知，已解決，在yml移除密碼配置
         System.out.println (redisTemplate.getConnectionFactory ().getConnection ());
         return redisTemplate;
     }
