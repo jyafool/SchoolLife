@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.OtherConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.entity.Dish;
 import com.sky.result.Result;
@@ -8,11 +9,12 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController ("userDishController")
@@ -20,8 +22,12 @@ import java.util.List;
 @Slf4j
 @Api (tags = "C端-菜品浏览接口")
 public class DishController {
-    @Autowired
+    @Resource (name = "dishServiceImpl")
     private DishService dishService;
+    
+    
+    @Resource
+    private RedisTemplate redisTemplate;
     
     /**
      * 根据分类id查询菜品
@@ -32,11 +38,26 @@ public class DishController {
     @GetMapping ("/list")
     @ApiOperation ("根据分类id查询菜品")
     public Result<List<DishVO>> list (Long categoryId) {
-        Dish dish = new Dish ();
-        dish.setCategoryId (categoryId);
-        dish.setStatus (StatusConstant.ENABLE);//查询起售中的菜品
         
-        List<DishVO> list = dishService.listWithFlavor (dish);
+        // 構造redis中的key
+        String key = OtherConstant.DISH_ + categoryId;
+        
+        // 查詢redis中是否存在菜品數據
+        List<DishVO> list = (List<DishVO>) redisTemplate.opsForValue ().get (key);
+        if (list != null && list.size () > 0) {
+            // 存在，直接返回
+            return Result.success (list);
+        }
+        
+        Dish dish = Dish.builder ()
+                .categoryId (categoryId)
+                .status (StatusConstant.ENABLE)//查询起售中的菜品
+                .build ();
+        
+        // 不存在就去數據庫查
+        list = dishService.listWithFlavor (dish);
+        // 查完再放到redis中
+        redisTemplate.opsForValue ().set (key, list);
         
         return Result.success (list);
     }

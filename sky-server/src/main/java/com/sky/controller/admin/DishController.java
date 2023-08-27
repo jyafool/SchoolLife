@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.OtherConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
@@ -10,10 +11,12 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Api (tags = "菜品相關接口")
@@ -23,6 +26,9 @@ public class DishController {
     
     @Resource (name = "dishServiceImpl")
     private DishService dishService;
+    
+    @Resource
+    private RedisTemplate redisTemplate;
     
     /**
      * 新增菜品 :新增的菜品中可以包含多中口味，因此對於口味的數據表操做要一同實現
@@ -38,6 +44,10 @@ public class DishController {
         if (resultRow == 1) {
             log.info ("菜品添加成功");
         }
+        
+        // 清理緩存數據
+        cleanCache (OtherConstant.DISH_ + dishDTO.getCategoryId ());
+        
         return Result.success ();
     }
     
@@ -72,6 +82,10 @@ public class DishController {
     public Result deleteDish (@RequestParam List<Long> ids) {
         log.info ("要刪除菜品的id集合：{}", ids);
         dishService.deleteDish (ids);
+    
+        // 清理緩存數據
+        cleanCache (OtherConstant.DISH_ + "*");
+    
         return Result.success ();
     }
     
@@ -94,6 +108,10 @@ public class DishController {
     public Result updateDish (@RequestBody DishDTO dishDTO) {
         log.info ("要修改的菜品信息：{}", dishDTO);
         dishService.updateDish (dishDTO);
+    
+        // 清理緩存數據
+        cleanCache (OtherConstant.DISH_ + "*");
+    
         return Result.success ();
     }
     
@@ -113,6 +131,9 @@ public class DishController {
                 .id (id)
                 .build ();
         dishService.changeStatus (dishDTO);
+    
+        // 清除該菜品緩存
+        cleanCache (OtherConstant.DISH_ + "*");
         return Result.success ();
     }
     
@@ -127,8 +148,18 @@ public class DishController {
     public Result<List<Dish>> selectByCategoryId (@RequestParam Long categoryId) {
         log.info ("根據分類id查詢菜品:{}", categoryId);
         List<Dish> dishes = dishService.selectByCategoryId (categoryId);
-        
+    
         return Result.success (dishes);
+    }
+    
+    /**
+     * 清理緩存數據
+     *
+     * @param pattern
+     */
+    private void cleanCache (String pattern) {
+        Set keys = redisTemplate.keys (pattern);
+        redisTemplate.delete (keys);
     }
     
 }

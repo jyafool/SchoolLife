@@ -9,6 +9,7 @@ import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ public class SetmealController {
      * @return
      */
     @ApiOperation ("新增套餐")
+    @CacheEvict (cacheNames = "setmealCache", key = "#setmealDTO.categoryId")
     @PostMapping
     public Result createSetmeal (@RequestBody SetmealDTO setmealDTO) {
         log.info ("添加的套餐:{}", setmealDTO);
@@ -70,6 +72,7 @@ public class SetmealController {
      * @return
      */
     @ApiOperation ("修改套餐")
+    @CacheEvict (cacheNames = "setmealCache", allEntries = true)
     @PutMapping
     public Result updateSetmeal (@RequestBody SetmealDTO setmealDTO) {
         setmealService.updateSetmeal (setmealDTO);
@@ -84,6 +87,7 @@ public class SetmealController {
      * @return
      */
     @ApiOperation ("套餐的啓售停售")
+    @CacheEvict (cacheNames = "setmealCache", allEntries = true)
     @PostMapping ("/status/{status}")
     public Result changeStatus (@PathVariable Integer status, Long id) {
         
@@ -99,6 +103,7 @@ public class SetmealController {
      * @return
      */
     @ApiOperation ("(批量)刪除套餐")
+    @CacheEvict (cacheNames = "setmealCache", allEntries = true)
     @DeleteMapping
     public Result deleteSetmeal (@RequestParam List<Long> ids) {
         setmealService.deleteSetmeal (ids);
