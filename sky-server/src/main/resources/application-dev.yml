@@ -12,10 +12,10 @@ sky:
     password: Ljf20031227
     datebase: 10
   alioss:
-    endpoint: 告訴對方
-    access-key-id: 受到廣汎
-    access-key-secret: 士大夫敢死隊風格
-    bucket-name: 歲的法國
+    endpoint: oss-cn-beijing.aliyuncs.com
+    access-key-id: LTAI5tFh5MdcFDXJmQo1vNNo
+    access-key-secret: hFxM4w6SL2EA6SrIKIEVyUmcWQoToE
+    bucket-name: modestggb
   wechat:
     appid: wx12b66057dae5aa1d
     secret: fb9c91dc94adf68880c4d8b8efbc22ff

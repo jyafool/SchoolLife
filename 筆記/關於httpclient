@@ -1,0 +1,14 @@
+HttpClient：
+    用來提供高效的、最新的、功能豐富的支持http協議的客戶端編程工具包，并且支持http協議最新的版本和建議。
+
+    核心api：
+        HttpClient：發送http請求
+        HttpClients：相當於構建器，可以創建httpclient對象
+        CloseableHttpClient：HttpClient的實現類
+        HttpGet：表示get請求
+        HttpPost：表示post請求
+
+    發送請求步驟：
+        1、創建HttpClient對象
+        2、創建Http請求對象
+        3、調用HttpClient的execute方法發送請求
