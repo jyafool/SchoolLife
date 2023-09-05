@@ -1,0 +1,17 @@
+WebSocket:
+    介紹：
+        WebSocket是基於TCP的一種新的網絡協議。
+        它實現了瀏覽器與服務器全雙工通信————瀏覽器和服務器之間只需要完成一次握手，
+        兩者之間就可以創建持久性的連接，并進行雙向數據傳輸。
+
+    maven坐標：
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+    HTTP協議與WebSocket協議對比：
+        http是短鏈接，websocket是長連接
+        http通信是單向的，基於請求響應模式
+        websocket支持雙向通信
+        http和websocket底層都是tcp連接
